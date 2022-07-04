@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useParams } from 'react-router-dom';
 import {
   Jumbotron,
   Container,
@@ -15,10 +16,9 @@ import Auth from '../utils/auth';
 import { removeBookId } from '../utils/localStorage';
 
 const SavedBooks = () => {
-  // const [userData, setUserData] = useState({});
+  const [setUserData] = useMutation(QUERY_ME);
 
-  // use this to determine if `useQuery()` hook needs to run again
-  const userDataLength = Object.keys(userData).length;
+  const { username: userParam } = useParams();
 
   const { loading, data } = useQuery(
     userParam
@@ -29,6 +29,9 @@ const SavedBooks = () => {
   );
 
   const userData = data?.me || data?.user || {};
+
+  // use this to determine if `useQuery()` hook needs to run again
+  const userDataLength = Object.keys(userData).length;
 
   useQuery(() => {
     const getUserData = async () => {
