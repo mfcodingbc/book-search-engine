@@ -1,6 +1,7 @@
-import React from 'react';
-import { Link, useParams } from 'react-router-dom';
-import { Nav } from 'react-bootstrap';
+// import React from 'react';
+import React, { useState, useEffect } from 'react';
+// import { Link, useParams } from 'react-router-dom';
+// import { Nav } from 'react-bootstrap';
 import {
   Jumbotron,
   Container,
@@ -8,46 +9,78 @@ import {
   Card,
   Button
 } from 'react-bootstrap';
+import { getMe, deleteBook } from '../utils/API';
 
-import { useQuery, useMutation } from '@apollo/client';
-import { QUERY_ME } from '../utils/queries';
+// import { useQuery, useMutation } from '@apollo/client';
+// import { QUERY_ME } from '../utils/queries';
 // import { REMOVE_BOOK } from '../utils/mutations';
 
 import Auth from '../utils/auth';
 import { removeBookId } from '../utils/localStorage';
 
+// const SavedBooks = () => {
+//   const [setUserData] = useMutation(QUERY_ME);
+
+//   const { username: userParam } = useParams();
+
+//   const { loading, data } = useQuery(
+//     userParam
+//       ? QUERY_ME
+//       : {
+//           variables: { username: userParam }
+//         }
+//   );
+
+//   const userData = data?.me || data?.user || {};
+
+//   // navigate to personal saved books page if username is the logged-in user's
+//   if (Auth.loggedIn() && Auth.getProfile().data.username === userParam) {
+//     return <Nav.Link as={Link} to='/saved'></Nav.Link>;
+//   }
+
+//   if (loading) {
+//     return <div>Loading...</div>;
+//   }
+
+//   if (!userData?.username) {
+//     return (
+//       <h4>
+//         You need to be logged in to see this page. Use the navigation links
+//         above to sign up or log in!
+//       </h4>
+//     );
+//   }
+
 const SavedBooks = () => {
-  const [setUserData] = useMutation(QUERY_ME);
+  const [userData, setUserData] = useState({});
 
-  const { username: userParam } = useParams();
+  // use this to determine if `useEffect()` hook needs to run again
+  const userDataLength = Object.keys(userData).length;
 
-  const { loading, data } = useQuery(
-    userParam
-      ? QUERY_ME
-      : {
-          variables: { username: userParam }
+  useEffect(() => {
+    const getUserData = async () => {
+      try {
+        const token = Auth.loggedIn() ? Auth.getToken() : null;
+
+        if (!token) {
+          return false;
         }
-  );
 
-  const userData = data?.me || data?.user || {};
+        const response = await getMe(token);
 
-  // navigate to personal saved books page if username is the logged-in user's
-  if (Auth.loggedIn() && Auth.getProfile().data.username === userParam) {
-    return <Nav.Link as={Link} to='/saved'></Nav.Link>;
-  }
+        if (!response.ok) {
+          throw new Error('something went wrong!');
+        }
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+        const user = await response.json();
+        setUserData(user);
+      } catch (err) {
+        console.error(err);
+      }
+    };
 
-  if (!userData?.username) {
-    return (
-      <h4>
-        You need to be logged in to see this page. Use the navigation links
-        above to sign up or log in!
-      </h4>
-    );
-  }
+    getUserData();
+  }, [userDataLength]);
 
   // // create function that accepts the book's mongo _id value as param and deletes the book from the database
   // const HandleDeleteBook = async (bookId) => {
