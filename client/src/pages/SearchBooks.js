@@ -1,9 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { Jumbotron, Container, Col, Form, Button, Card, CardColumns } from 'react-bootstrap';
+import {
+  Jumbotron,
+  Container,
+  Col,
+  Form,
+  Button,
+  Card,
+  CardColumns
+} from 'react-bootstrap';
+
+import { useMutation } from '@apollo/client';
 
 import Auth from '../utils/auth';
-import { saveBook, searchGoogleBooks } from '../utils/API';
+import { searchGoogleBooks } from '../utils/API';
 import { saveBookIds, getSavedBookIds } from '../utils/localStorage';
+
+import { SAVE_BOOK } from '../utils/queries';
 
 const SearchBooks = () => {
   // create state for holding returned google api data
@@ -42,7 +54,7 @@ const SearchBooks = () => {
         authors: book.volumeInfo.authors || ['No author to display'],
         title: book.volumeInfo.title,
         description: book.volumeInfo.description,
-        image: book.volumeInfo.imageLinks?.thumbnail || '',
+        image: book.volumeInfo.imageLinks?.thumbnail || ''
       }));
 
       setSearchedBooks(bookData);
@@ -63,6 +75,9 @@ const SearchBooks = () => {
     if (!token) {
       return false;
     }
+
+    // Apollo `useMutation` Hook implementation
+    const [saveBook, { error }] = useMutation(SAVE_BOOK);
 
     try {
       const response = await saveBook(bookToSave, token);
@@ -116,7 +131,11 @@ const SearchBooks = () => {
             return (
               <Card key={book.bookId} border='dark'>
                 {book.image ? (
-                  <Card.Img src={book.image} alt={`The cover for ${book.title}`} variant='top' />
+                  <Card.Img
+                    src={book.image}
+                    alt={`The cover for ${book.title}`}
+                    variant='top'
+                  />
                 ) : null}
                 <Card.Body>
                   <Card.Title>{book.title}</Card.Title>
@@ -124,10 +143,15 @@ const SearchBooks = () => {
                   <Card.Text>{book.description}</Card.Text>
                   {Auth.loggedIn() && (
                     <Button
-                      disabled={savedBookIds?.some((savedBookId) => savedBookId === book.bookId)}
+                      disabled={savedBookIds?.some(
+                        (savedBookId) => savedBookId === book.bookId
+                      )}
                       className='btn-block btn-info'
-                      onClick={() => handleSaveBook(book.bookId)}>
-                      {savedBookIds?.some((savedBookId) => savedBookId === book.bookId)
+                      onClick={() => handleSaveBook(book.bookId)}
+                    >
+                      {savedBookIds?.some(
+                        (savedBookId) => savedBookId === book.bookId
+                      )
                         ? 'This book has already been saved!'
                         : 'Save this Book!'}
                     </Button>
