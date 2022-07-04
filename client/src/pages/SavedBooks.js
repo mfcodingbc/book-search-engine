@@ -11,7 +11,7 @@ import {
 
 import { useQuery, useMutation } from '@apollo/client';
 import { QUERY_ME } from '../utils/queries';
-import { REMOVE_BOOK } from '../utils/mutations';
+// import { REMOVE_BOOK } from '../utils/mutations';
 
 import Auth from '../utils/auth';
 import { removeBookId } from '../utils/localStorage';
@@ -49,8 +49,40 @@ const SavedBooks = () => {
     );
   }
 
+  // // create function that accepts the book's mongo _id value as param and deletes the book from the database
+  // const HandleDeleteBook = async (bookId) => {
+  //   const token = Auth.loggedIn() ? Auth.getToken() : null;
+
+  //   if (!token) {
+  //     return false;
+  //   }
+
+  //   // Apollo `useMutation` Hook implementation
+  //   const [deleteBook, { error }] = useMutation(REMOVE_BOOK);
+
+  //   try {
+  //     const response = await deleteBook(bookId, token);
+
+  //     if (!response.ok) {
+  //       throw new Error('something went wrong!');
+  //     }
+
+  //     const updatedUser = await response.json();
+  //     setUserData(updatedUser);
+  //     // upon success, remove book's id from localStorage
+  //     removeBookId(bookId);
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // };
+
+  // // if data isn't here yet, say so
+  // if (loading) {
+  //   return <h2>LOADING...</h2>;
+  // }
+
   // create function that accepts the book's mongo _id value as param and deletes the book from the database
-  const HandleDeleteBook = async (bookId) => {
+  const handleDeleteBook = async (bookId) => {
     const token = Auth.loggedIn() ? Auth.getToken() : null;
 
     if (!token) {
@@ -58,8 +90,6 @@ const SavedBooks = () => {
     }
 
     try {
-      // Apollo `useMutation` Hook implementation
-      const [deleteBook, { error }] = useMutation(REMOVE_BOOK);
       const response = await deleteBook(bookId, token);
 
       if (!response.ok) {
@@ -76,7 +106,7 @@ const SavedBooks = () => {
   };
 
   // if data isn't here yet, say so
-  if (loading) {
+  if (!userDataLength) {
     return <h2>LOADING...</h2>;
   }
 
@@ -112,7 +142,7 @@ const SavedBooks = () => {
                   <Card.Text>{book.description}</Card.Text>
                   <Button
                     className='btn-block btn-danger'
-                    onClick={() => HandleDeleteBook(book.bookId)}
+                    onClick={() => handleDeleteBook(book.bookId)}
                   >
                     Delete this Book!
                   </Button>
