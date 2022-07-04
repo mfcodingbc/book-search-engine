@@ -30,33 +30,23 @@ const SavedBooks = () => {
 
   const userData = data?.me || data?.user || {};
 
-  // use this to determine if `useQuery()` hook needs to run again
-  const userDataLength = Object.keys(userData).length;
+  // navigate to personal saved books page if username is the logged-in user's
+  if (Auth.loggedIn() && Auth.getProfile().data.username === userParam) {
+    return <Navigate to='/saved' />;
+  }
 
-  useQuery(() => {
-    const getUserData = async () => {
-      try {
-        const token = Auth.loggedIn() ? Auth.getToken() : null;
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
-        if (!token) {
-          return false;
-        }
-
-        const response = await getMe(token);
-
-        if (!response.ok) {
-          throw new Error('something went wrong!');
-        }
-
-        const user = await response.json();
-        setUserData(user);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-
-    getUserData();
-  }, [userDataLength]);
+  if (!user?.username) {
+    return (
+      <h4>
+        You need to be logged in to see this page. Use the navigation links
+        above to sign up or log in!
+      </h4>
+    );
+  }
 
   // create function that accepts the book's mongo _id value as param and deletes the book from the database
   const handleDeleteBook = async (bookId) => {
