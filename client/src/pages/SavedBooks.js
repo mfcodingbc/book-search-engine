@@ -1,5 +1,6 @@
 import React from 'react';
-import { Navigate, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
+import { Nav } from 'react-bootstrap';
 import {
   Jumbotron,
   Container,
@@ -32,7 +33,7 @@ const SavedBooks = () => {
 
   // navigate to personal saved books page if username is the logged-in user's
   if (Auth.loggedIn() && Auth.getProfile().data.username === userParam) {
-    return <Navigate to='/saved' />;
+    return <Nav.Link as={Link} to='/saved'></Nav.Link>;
   }
 
   if (loading) {
