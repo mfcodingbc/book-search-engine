@@ -8,7 +8,7 @@ This site allows anyone to search for books that are found in Google Books. If a
 
 ## Installation
 
-Check out the [Book Search Engine](https://calm-earth-58657.herokuapp.com/) Site.
+Check out the [Book Search Engine](https://quiet-springs-57791.herokuapp.com/) Site.
 
 ![Book Search Engine Site Demo](./assets/images/book_search_engine_demo.gif)
 
