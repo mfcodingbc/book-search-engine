@@ -57,10 +57,9 @@ const SavedBooks = () => {
       return false;
     }
 
-    // Apollo `useMutation` Hook implementation
-    const [deleteBook, { error }] = useMutation(REMOVE_BOOK);
-
     try {
+      // Apollo `useMutation` Hook implementation
+      const [deleteBook, { error }] = useMutation(REMOVE_BOOK);
       const response = await deleteBook(bookId, token);
 
       if (!response.ok) {
