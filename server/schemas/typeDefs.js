@@ -39,11 +39,11 @@ const typeDefs = gql`
 
   input BookInput {
     _id: ID!
+    "The id of the book taken from Google Books page"
+    bookId: String!
     authors: [String!]
     description: String!
     title: String!
-    "The id of the book taken from Google Books page"
-    bookId: String!
     image: String!
     link: String!
   }
