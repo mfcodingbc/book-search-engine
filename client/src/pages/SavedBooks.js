@@ -1,5 +1,5 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import { Navigate, useParams } from 'react-router-dom';
 import {
   Jumbotron,
   Container,
@@ -39,7 +39,7 @@ const SavedBooks = () => {
     return <div>Loading...</div>;
   }
 
-  if (!user?.username) {
+  if (!userData?.username) {
     return (
       <h4>
         You need to be logged in to see this page. Use the navigation links
@@ -49,7 +49,7 @@ const SavedBooks = () => {
   }
 
   // create function that accepts the book's mongo _id value as param and deletes the book from the database
-  const handleDeleteBook = async (bookId) => {
+  const HandleDeleteBook = async (bookId) => {
     const token = Auth.loggedIn() ? Auth.getToken() : null;
 
     if (!token) {
@@ -76,7 +76,7 @@ const SavedBooks = () => {
   };
 
   // if data isn't here yet, say so
-  if (!userDataLength) {
+  if (loading) {
     return <h2>LOADING...</h2>;
   }
 
@@ -112,7 +112,7 @@ const SavedBooks = () => {
                   <Card.Text>{book.description}</Card.Text>
                   <Button
                     className='btn-block btn-danger'
-                    onClick={() => handleDeleteBook(book.bookId)}
+                    onClick={() => HandleDeleteBook(book.bookId)}
                   >
                     Delete this Book!
                   </Button>
